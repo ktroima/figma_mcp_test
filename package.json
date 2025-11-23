@@ -1,0 +1,20 @@
+{
+  "name": "figma_mcp_test",
+  "version": "1.0.0",
+  "description": "figma連携を試すリポジトリ",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "mcp": "node src/server.js --mcp",
+    "test": "echo \"No tests specified\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "axios": "^1.13.2",
+    "express": "^5.1.0"
+  }
+}
