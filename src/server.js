@@ -52,19 +52,34 @@ app.get('/api/figma/design-tokens', (req, res) => {
 });
 
 app.post('/api/figma/design-tokens', (req, res) => {
-    designTokens = { ...designTokens, ...req.body };
-    res.json({ success: true, tokens: designTokens });
+    // Basic validation for design tokens
+    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) {
+        designTokens = { ...designTokens, ...req.body };
+        res.json({ success: true, tokens: designTokens });
+    } else {
+        res.status(400).json({ success: false, error: 'Invalid design tokens format' });
+    }
 });
 
 app.post('/api/figma/sync', (req, res) => {
-    cartData = req.body.cart || [];
-    console.log('Cart synced with Figma MCP:', cartData);
-    res.json({ success: true, synced: true });
+    // Basic validation for cart data
+    if (Array.isArray(req.body.cart)) {
+        cartData = req.body.cart;
+        console.log('Cart synced with Figma MCP:', cartData);
+        res.json({ success: true, synced: true });
+    } else {
+        res.status(400).json({ success: false, error: 'Invalid cart data format' });
+    }
 });
 
 app.post('/api/figma/log', (req, res) => {
+    // Basic validation and size limit for logs
+    if (eventLogs.length >= 1000) {
+        eventLogs.shift(); // Remove oldest log
+    }
     const log = {
-        ...req.body,
+        event: req.body.event || 'unknown',
+        data: req.body.data || {},
         id: eventLogs.length + 1,
         timestamp: Date.now()
     };
@@ -170,15 +185,20 @@ class FigmaMCPServer {
                     };
 
                 case 'update_design_tokens':
-                    designTokens = { ...designTokens, ...args.tokens };
-                    return {
-                        content: [
-                            {
-                                type: 'text',
-                                text: `デザイントークンが更新されました: ${JSON.stringify(designTokens, null, 2)}`,
-                            },
-                        ],
-                    };
+                    // Validate tokens structure
+                    if (args.tokens && typeof args.tokens === 'object' && !Array.isArray(args.tokens)) {
+                        designTokens = { ...designTokens, ...args.tokens };
+                        return {
+                            content: [
+                                {
+                                    type: 'text',
+                                    text: `デザイントークンが更新されました: ${JSON.stringify(designTokens, null, 2)}`,
+                                },
+                            ],
+                        };
+                    } else {
+                        throw new Error('Invalid design tokens format');
+                    }
 
                 case 'get_cart_data':
                     return {
@@ -215,22 +235,19 @@ class FigmaMCPServer {
     }
 }
 
-// Start Express server
-app.listen(PORT, () => {
-    console.log(`EC Demo Server running at http://localhost:${PORT}`);
-    console.log(`Figma MCP integration enabled`);
-    console.log('\n📦 ECサイトデモが起動しました！');
-    console.log(`🌐 ブラウザで http://localhost:${PORT} にアクセスしてください`);
-    console.log('🎨 Figma MCPサーバーと連携しています\n');
-});
-
 // Export for MCP server mode
 if (require.main === module && process.argv.includes('--mcp')) {
     const mcpServer = new FigmaMCPServer();
     mcpServer.run().catch(console.error);
 } else if (require.main === module) {
-    // Just run the Express server
-    console.log('Running in web server mode');
+    // Start Express server in web mode only
+    app.listen(PORT, () => {
+        console.log(`EC Demo Server running at http://localhost:${PORT}`);
+        console.log(`Figma MCP integration enabled`);
+        console.log('\n📦 ECサイトデモが起動しました！');
+        console.log(`🌐 ブラウザで http://localhost:${PORT} にアクセスしてください`);
+        console.log('🎨 Figma MCPサーバーと連携しています\n');
+    });
 }
 
 module.exports = { app, FigmaMCPServer };
