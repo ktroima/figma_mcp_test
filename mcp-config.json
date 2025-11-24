@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "figma-ec-demo": {
+      "command": "node",
+      "args": [
+        "src/server.js",
+        "--mcp"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
