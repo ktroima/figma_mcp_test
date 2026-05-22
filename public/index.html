@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECサイトデモ - Figma MCP連携</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">ECショップ</h1>
+            <nav>
+                <a href="#products">商品一覧</a>
+                <a href="#cart" class="cart-link">
+                    カート <span id="cart-count" class="cart-count">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="products" class="products-section">
+            <h2>商品一覧</h2>
+            <div class="figma-info">
+                <p>🎨 このデザインはFigma MCPサーバーと連携しています</p>
+            </div>
+            <div id="products-grid" class="products-grid">
+                <!-- Products will be loaded here -->
+            </div>
+        </section>
+
+        <section id="cart" class="cart-section" style="display: none;">
+            <h2>ショッピングカート</h2>
+            <div id="cart-items" class="cart-items">
+                <!-- Cart items will be shown here -->
+            </div>
+            <div class="cart-total">
+                <h3>合計: <span id="total-price">¥0</span></h3>
+                <button class="btn btn-primary" onclick="checkout()">購入する</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2023 ECショップ - Figma MCP Demo</p>
+            <p class="figma-badge">Powered by Figma MCP Server</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
